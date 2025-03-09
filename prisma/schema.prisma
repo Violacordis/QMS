@@ -46,7 +46,9 @@ model QueueTicket {
   updatedAt    DateTime     @default(now()) @updatedAt @db.Timestamp(6)
   patient      Patient      @relation(fields: [patientId], references: [id])
 
-  @@unique([ticketDate, ticketNumber])
+  @@unique([ticketDate, status, ticketNumber])
+  @@index([patientId])
+  @@index([ticketNumber])
   @@map("tickets")
 }
 

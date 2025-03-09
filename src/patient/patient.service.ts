@@ -49,8 +49,9 @@ export class PatientService {
 
   async checkInPatient({ regNum }: CheckInPatientDTO) {
     try {
-      const patient = await this.prisma.patient.findFirst({
+      const patient = await this.prisma.patient.findUnique({
         where: { regNum },
+        select: { id: true, regNum: true },
       });
 
       if (!patient) {
@@ -65,6 +66,7 @@ export class PatientService {
           status: TicketStatus.CheckedIn,
           ticketDate: { gt: moment().utc().startOf('day').toDate() },
         },
+        select: { id: true },
       });
 
       if (activeTicket) {
@@ -73,21 +75,9 @@ export class PatientService {
         );
       }
 
-      const ticketNumber = await this.generateTicketNumber(patient);
-      const existingTicket = await this.prisma.queueTicket.findFirst({
-        where: {
-          ticketDate: moment().utc().startOf('day').toDate(),
-          ticketNumber,
-        },
-      });
+      const ticketNumber = await this.generateTicketNumber(patient.regNum);
 
-      if (existingTicket) {
-        throw new ConflictException(
-          'A ticket with this number already exists for today',
-        );
-      }
-
-      return await this.prisma.$transaction(async (prisma: PrismaClient) => {
+      return await this.prisma.$transaction(async (prisma: PrismaService) => {
         const ticket = await prisma.queueTicket.create({
           data: {
             ticketNumber,
@@ -108,7 +98,8 @@ export class PatientService {
     }
   }
 
-  private async generateTicketNumber(Patient: Patient) {
-    return [Patient.regNum, String().padStart(2, '0')].join('');
+  private async generateTicketNumber(regNum: string) {
+    const random = Math.floor(Math.random() * 1000);
+    return [random, String().padStart(5, regNum)].join('');
   }
 }
