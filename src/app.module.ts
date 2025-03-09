@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { AppUtilities } from './app.utils';
 import { TicketModule } from './ticket/ticket.module';
+import { PatientModule } from './patient/patient.module';
+import { PrismaService } from './common/database/prisma/prisma.service';
+import { PrismaModule } from './common/database/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -30,8 +31,11 @@ import { TicketModule } from './ticket/ticket.module';
       ],
     }),
     TicketModule,
+    PatientModule,
+    PrismaModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, AppUtilities],
+  controllers: [],
+  providers: [AppUtilities],
+  exports: [AppUtilities],
 })
 export class AppModule {}

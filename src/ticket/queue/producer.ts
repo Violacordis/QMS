@@ -15,6 +15,7 @@ export class QueueProducer {
   }
 
   async queuePatients(data: ProcessPatientCheckInJobAttribs) {
+    console.log('Queueing patients');
     await this.addToQueue(JOBS.PATIENT_CHECKIN, data, {
       removeOnComplete: true,
       attempts: 3,

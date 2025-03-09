@@ -3,7 +3,7 @@ CREATE TYPE "TicketStatus" AS ENUM ('CheckedIn', 'Served');
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" VARCHAR(75) NOT NULL,
     "name" VARCHAR(75),
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -14,7 +14,7 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "patients" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" VARCHAR(75) NOT NULL,
     "name" VARCHAR(75) NOT NULL,
     "regNum" VARCHAR(50) NOT NULL,
@@ -27,10 +27,10 @@ CREATE TABLE "patients" (
 
 -- CreateTable
 CREATE TABLE "tickets" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "ticketNumber" VARCHAR(50) NOT NULL,
     "ticketDate" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "patientId" VARCHAR(50) NOT NULL,
+    "patientId" UUID NOT NULL,
     "status" "TicketStatus" NOT NULL DEFAULT 'CheckedIn',
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,

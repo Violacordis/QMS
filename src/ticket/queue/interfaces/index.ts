@@ -6,4 +6,5 @@ export enum JOBS {
 
 export interface ProcessPatientCheckInJobAttribs {
   patientId: string;
+  ticketId: string;
 }
