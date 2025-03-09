@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
+import { AppUtilities } from './app.utils';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
   imports: [
@@ -27,8 +29,9 @@ import { BullModule } from '@nestjs/bull';
         },
       ],
     }),
+    TicketModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppUtilities],
 })
 export class AppModule {}
