@@ -1,11 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient, TicketStatus } from '@prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TicketStatus } from '@prisma/client';
 import { PrismaService } from 'src/common/database/prisma/prisma.service';
 
 @Injectable()
 export class TicketService {
   protected logger: Logger;
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {
     this.logger = new Logger(TicketService.name);
   }
 
@@ -24,6 +28,8 @@ export class TicketService {
         where: { id: ticket.id },
         data: { status: TicketStatus.Served },
       });
+
+      this.eventEmitter.emit('dashboard.summary');
     } catch (error) {
       this.logger.error(error);
       throw new Error(error.message);

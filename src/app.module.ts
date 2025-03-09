@@ -5,8 +5,10 @@ import { BullModule } from '@nestjs/bull';
 import { AppUtilities } from './app.utils';
 import { TicketModule } from './ticket/ticket.module';
 import { PatientModule } from './patient/patient.module';
-import { PrismaService } from './common/database/prisma/prisma.service';
 import { PrismaModule } from './common/database/prisma/prisma.module';
+import { EventsGateway } from './socket';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -33,9 +35,15 @@ import { PrismaModule } from './common/database/prisma/prisma.module';
     TicketModule,
     PatientModule,
     PrismaModule,
+    DashboardModule,
+    EventEmitterModule.forRoot({
+      verboseMemoryLeak: false,
+      delimiter: '.',
+      wildcard: true,
+    }),
   ],
   controllers: [],
-  providers: [AppUtilities],
-  exports: [AppUtilities],
+  providers: [AppUtilities, EventsGateway, EventEmitter2],
+  exports: [AppUtilities, EventsGateway, EventEmitter2],
 })
 export class AppModule {}

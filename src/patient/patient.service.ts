@@ -9,9 +9,10 @@ import { PrismaService } from 'src/common/database/prisma/prisma.service';
 import { RegisterPatientDTO } from './dto/register-patient.dto';
 import { AppUtilities } from 'src/app.utils';
 import { CheckInPatientDTO } from './dto/check_in.dto';
-import { Patient, PrismaClient, TicketStatus } from '@prisma/client';
+import { TicketStatus } from '@prisma/client';
 import * as moment from 'moment';
 import { QueueProducer } from 'src/ticket/queue/producer';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class PatientService {
@@ -19,6 +20,7 @@ export class PatientService {
   constructor(
     private prisma: PrismaService,
     private queueProducer: QueueProducer,
+    private eventEmitter: EventEmitter2,
   ) {
     this.logger = new Logger(PatientService.name);
   }
@@ -35,12 +37,16 @@ export class PatientService {
 
       const regNum = AppUtilities.generateNoString(5);
 
-      return await this.prisma.patient.create({
+      const patient = await this.prisma.patient.create({
         data: {
           ...data,
           regNum,
         },
       });
+
+      this.eventEmitter.emit('dashboard.summary');
+
+      return patient;
     } catch (error) {
       this.logger.error(error.message);
       throw new ConflictException(error.message);
